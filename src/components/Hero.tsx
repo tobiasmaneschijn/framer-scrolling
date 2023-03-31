@@ -1,10 +1,11 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   motion,
   useReducedMotion,
   useScroll,
   useTransform,
 } from "framer-motion";
+import useBlockScrolling from "../hooks/useBlockScrolling";
 
 type HeroProps = {
   image: string | undefined;
@@ -14,12 +15,23 @@ type HeroProps = {
 const Hero = ({ image, title }: HeroProps) => {
   const containerRef = useRef(null);
 
+  const {blockScrolling, unblockScrolling} = useBlockScrolling("top");
+
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end end"],
   });
 
   const shouldUseReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    blockScrolling();
+    }, []);
+
+  const animationDone = () => {
+    unblockScrolling();
+    };
+    
 
   return (
     <section
@@ -48,6 +60,7 @@ const Hero = ({ image, title }: HeroProps) => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 1 }}
+              onAnimationComplete={animationDone}
               className="text-white text-7xl font-bold"
             >
               {

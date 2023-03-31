@@ -15,7 +15,7 @@ function App() {
         image={undefined}
       />
       <ScrollAnimation image={spaghettiBowl} title="We are the Spagghetti" />
-      <ScrollAnimation image={spaghetti1} title="You are the Spaghetti" />
+      <ScrollAnimation left image={spaghetti1} title="You are the Spaghetti" />
       <ScrollAnimation image={spaghetti2} title="Embrace Spaghetti" />
     </div>
   );
