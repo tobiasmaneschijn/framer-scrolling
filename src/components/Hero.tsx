@@ -5,7 +5,8 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
-import useBlockScrolling from "../hooks/useBlockScrolling";
+
+import useBlockScrolling from "tm-hooks/lib/useBlockScrolling"
 
 type HeroProps = {
   image: string | undefined;
