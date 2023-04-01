@@ -5,17 +5,44 @@ import {
   useScroll,
   useTransform,
 } from "framer-motion";
+import { hexToRGBA } from "../utils/colorUtils";
+import { RandomBlinkingText } from "./BlinkingText";
 
 type ScrollAnimationProps = {
   image: string | undefined;
   title: string | undefined;
   left?: boolean;
+  backgroundColor?: string;
 };
+
+const alternateTexts = [
+  "help me!",
+  "It's not what it seems",
+  "It's all a lie",
+  "Don't believe them",
+  "They are watching",
+  "Nothing is real",
+  "Trust no one",
+  "Beware of the shadows",
+  "Hidden in plain sight",
+  "The truth is out there",
+  "They know everything",
+  "We are not alone",
+  "Silence is key",
+  "Stay vigilant",
+  "Uncover the secrets",
+  "Deception is everywhere",
+  "Listen to the whispers",
+  "They walk among us",
+  "The world is an illusion",
+  "Unravel the mystery",
+];
 
 export const ScrollAnimation = ({
   image,
   title,
   left = false,
+  backgroundColor = "bg-slate-900",
 }: ScrollAnimationProps) => {
   const containerRef = useRef(null);
 
@@ -34,50 +61,67 @@ export const ScrollAnimation = ({
     [0, 1],
     left ? ["100%", "0%"] : ["-100%", "0%"]
   );
-  const topShadowValue = useTransform(
-    scrollYProgress,
-    [0, 1],
-    left ? ["25%", "-100%"] : ["-25%", "100%"]
-  );
+
+  const gradientStart = hexToRGBA(backgroundColor, 0);
+  const gradientEnd = hexToRGBA(backgroundColor, 1);
 
   const shouldUseReducedMotion = useReducedMotion();
 
+  const styles = {
+    bottomShadow: {
+      background: `linear-gradient(90deg, ${gradientStart} 0%, ${gradientEnd} 40%)`,
+    },
+    topShadow: {
+      background: `linear-gradient(90deg, ${gradientStart} 0%, ${gradientEnd} 25%)`,
+    },
+    rightShadow: {
+      background: `linear-gradient(-90deg, ${gradientStart} 0%, ${gradientEnd} 40%)`,
+    },
+    leftShadow: {
+      background: `linear-gradient(-90deg,${gradientStart} 0%, ${gradientEnd} 25%)`,
+    },
+  };
+
+  const backgroundShadow = left ? styles.rightShadow : styles.bottomShadow;
+
+  const imageOpacityValue = useTransform(scrollYProgress, [0, 1], [0, 1]);
+
   return (
     <section
-      className={`min-h-screen flex ${
-        left ? "flex-row-reverse" : "flex-row"
-      } justify-between max-w-6xl mx-auto overflow-hidden`}
+      className={`snap-center h-screen flex-col justify-between w-full  mx-auto overflow-hidden  flex ${
+        left ? "md:flex-row-reverse" : "md:flex-row"
+      } `}
       ref={containerRef}
+      style={{ backgroundColor: backgroundColor }}
     >
-      <div className="flex items-center flex-col justify-center w-2/6 ml-[5%] text-left">
-        <h2 className="text-2xl lg:text-6xl mt-0 ">{title}</h2>
+      <div className="flex items-center flex-col justify-center w-full h-1/2 md:h-full md:w-1/2 text-center">
+        <h2 className="text-2xl md:text-3xl lg:text-5xl mt-0 invert ">
+          <RandomBlinkingText
+            text={title || ""}
+            alternateTexts={alternateTexts}
+            blinkDuration={250}
+            minInterval={5000}
+            maxInterval={15000}
+          />{" "}
+        </h2>
       </div>
-      <div className="w-1/2 flex items-center relative">
+      <div className="h-1/2 md:w-1/2 w-full  md:h-full flex items-center relative">
         <motion.div
-          className="img-inner"
+          className="img-inner w-full h-full object-cover"
           style={{ translateX: shouldUseReducedMotion ? 0 : imageValue }}
         >
           {!shouldUseReducedMotion && (
             <motion.div
-              className={`${
-                left ? "right-shadow" : "bottom-shadow"
-              } h-full w-full absolute left-0 z-0`}
-              style={{ translateX: bottomShadowValue }}
+              className={`h-full w-full absolute left-0 z-0 `}
+              style={{ translateX: bottomShadowValue, ...backgroundShadow }}
             />
           )}
-          <img
-            className="max-w-3xl w-full h-auto relative z-1"
+          <motion.img
+            className="w-full h-full relative z-1 object-cover"
             src={image}
             alt="a bowl of spag"
+            style={{ opacity: shouldUseReducedMotion ? 1 : imageOpacityValue }}
           />
-          {!shouldUseReducedMotion && (
-            <motion.div
-              className={`${
-                left ? "left-shadow" : "top-shadow"
-              } h-full w-[140%] absolute left-0 top-0 z-2`}
-              style={{ translateX: topShadowValue }}
-            />
-          )}
         </motion.div>
       </div>
     </section>
