@@ -100,8 +100,8 @@ export const ScrollAnimation = ({
             text={title || ""}
             alternateTexts={alternateTexts}
             blinkDuration={250}
-            minInterval={5000}
-            maxInterval={15000}
+            minInterval={3000}
+            maxInterval={7500}
           />{" "}
         </h2>
       </div>
