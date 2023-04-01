@@ -13,7 +13,9 @@ type ScrollAnimationProps = {
   title: string | undefined;
   left?: boolean;
   backgroundColor?: string;
-};
+  content?: string | React.ReactNode | undefined;
+  
+} & React.HTMLAttributes<HTMLDivElement>;
 
 const alternateTexts = [
   "help me!",
@@ -43,6 +45,9 @@ export const ScrollAnimation = ({
   title,
   left = false,
   backgroundColor = "bg-slate-900",
+  content,
+  className,
+
 }: ScrollAnimationProps) => {
   const containerRef = useRef(null);
 
@@ -90,20 +95,24 @@ export const ScrollAnimation = ({
     <section
       className={`snap-center h-screen flex-col justify-between w-full  mx-auto overflow-hidden  flex ${
         left ? "md:flex-row-reverse" : "md:flex-row"
-      } `}
+      } ${className} `}
       ref={containerRef}
       style={{ backgroundColor: backgroundColor }}
     >
-      <div className="flex items-center flex-col justify-center w-full h-1/2 md:h-full md:w-1/2 text-center">
-        <h2 className="text-2xl md:text-3xl lg:text-5xl mt-0 invert ">
+      <div className="flex items-center flex-col justify-center gap-4 w-full h-1/2 md:h-full md:w-1/2 text-center">
+        <h2 className="text-2xl md:text-3xl lg:text-5xl mt-0  p-4">
           <RandomBlinkingText
             text={title || ""}
             alternateTexts={alternateTexts}
             blinkDuration={250}
-            minInterval={3000}
-            maxInterval={7500}
+            minInterval={4000}
+            maxInterval={8000}
           />{" "}
         </h2>
+        <div className="p-4 text-left">
+          {content}
+        </div>
+
       </div>
       <div className="h-1/2 md:w-1/2 w-full  md:h-full flex items-center relative">
         <motion.div
